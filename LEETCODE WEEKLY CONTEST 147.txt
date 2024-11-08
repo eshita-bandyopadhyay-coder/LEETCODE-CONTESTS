@@ -1,0 +1,19 @@
+// LEETCODE WEEKLY CONTEST 147
+
+class Solution {
+public:
+    char kthCharacter(int k) {
+      string word="a";
+      while(word.length()<k)
+      {
+        string t;
+        for(int i=0;i<word.length();i++)
+        {
+            if(word[i]=='z') t.push_back('a');
+            else t.push_back(word[i]+1);
+            }
+            word+=t;
+      }  
+      return word[k-1];
+    }
+};
