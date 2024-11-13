@@ -1,0 +1,28 @@
+// LEETCODE CONTEST 420 Q2.
+
+class Solution {
+public:
+    int numberOfSubstrings(string s, int k) {
+       int n=s.size(), ans=0;
+       for(int i=0;i<n;i++)
+       {
+        vector<int> cnt(26,0);
+        for(int j=i;j<n;j++)
+        {
+            cnt[s[j]-'a']++;
+            bool found=false;
+            for(int l=0;l<26;l++)
+            {
+                if(cnt[l] >= k)
+                {
+                    found=true;
+                break;
+                }
+            }
+            if(found)ans++;
+        }
+       
+       } 
+       return ans;
+    }
+};
