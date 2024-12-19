@@ -1,0 +1,80 @@
+// LEETCODE WEEKLY 428 Q2
+
+class Solution {
+public:
+    double maxAmount(string initialCurrency, vector<vector<string>>& pairs1, vector<double>& rates1, vector<vector<string>>& pairs2, vector<double>& rates2) {
+        map<string , vector<pair<string, double>>> adj1, adj2;
+
+        // Construct graph1
+        for (int i = 0; i < pairs1.size(); i++) {
+            adj1[pairs1[i][0]].push_back({pairs1[i][1], rates1[i]});
+            adj1[pairs1[i][1]].push_back({pairs1[i][0], 1 / rates1[i]});
+        }
+
+        // Contruct graph2
+        for (int i = 0; i < pairs2.size(); i++) {
+            adj2[pairs2[i][0]].push_back({pairs2[i][1], rates2[i]});
+            adj2[pairs2[i][1]].push_back({pairs2[i][0], 1 / rates2[i]});
+        }
+
+        double ans = 1; // Final Answer
+
+        // Function for bfs on graph2, where start is our initial currency for bfs on graph2 
+        auto bfs = [&](string start) -> double {
+            queue<pair<string, double>> q;
+            q.push({start, 1.0});
+            map<string , bool> vis;
+            vis[start] = 1;
+
+            double ans = 0;
+            
+            while (!q.empty()) {
+                string curr = q.front().first;
+                double amount = q.front().second; // Previou amount
+                q.pop();
+
+                if (curr == initialCurrency) {
+                    ans = max (ans, amount);
+                    continue;
+                }
+                for (auto node : adj2[curr]) {
+                    if (!vis[node.first]) {
+                        double newAmount = amount * node.second; // New amount
+                        vis[node.first] = 1;
+                        q.push({node.first, newAmount}); // Push
+                    }
+                }
+                
+            }
+            return ans;
+        };
+
+        queue<pair<string, double>> q; // Queue for traversal
+        q.push({initialCurrency, 1.0});
+        map<string , bool> vis; // Maitain visited map for keeping the track
+        vis[initialCurrency] = 1;
+
+        
+        while (!q.empty()) {
+            string curr = q.front().first;
+            double amount = q.front().second; // Previous amount
+            q.pop(); // Pop front element
+
+            for (auto node : adj1[curr]) {
+                if (!vis[node.first]) {
+                    double newAmount = amount * node.second; 
+                    
+                    vis[node.first] = 1;
+                    // If our current node is present in graph2
+                    if (adj2.find(node.first) != adj2.end()) {
+                        double tempAns = bfs(node.first); // Perform BFS on graph2
+                        ans = max (ans, tempAns * newAmount); // Update the anwer
+                    }
+                    q.push({node.first, newAmount}); // Push
+                }
+            }
+        }
+
+        return ans;
+    }
+};
