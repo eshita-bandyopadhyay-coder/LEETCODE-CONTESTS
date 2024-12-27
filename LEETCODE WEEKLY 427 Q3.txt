@@ -1,0 +1,28 @@
+//LEETCODE WEEKLY 427 Q3
+
+class Solution {
+public:
+    long long maxSubarraySum(vector<int>& nums, int k) {
+        int n=nums.size();
+        vector<long long>prefix_sum(n+1,0);
+        vector<long long>min_prefix_sum(k+1,LLONG_MAX);
+
+        for(int i=1;i<=n;i++)
+            prefix_sum[i]=prefix_sum[i-1]+nums[i-1]*1LL;
+
+        min_prefix_sum[0]=0;
+        long long ans=LLONG_MIN;
+
+        for(int i=1;i<=n;i++)
+            {
+                if(min_prefix_sum[i%k]!=LLONG_MAX)
+                {
+                    ans=max(ans,prefix_sum[i]-min_prefix_sum[i%k]);
+                }
+                min_prefix_sum[i%k]=min(min_prefix_sum[i%k],prefix_sum[i]);
+            }
+
+        return ans;
+        
+    }
+};
